@@ -11,8 +11,8 @@ cors: v2.8.5
 express: v4.17.1 
 express-validator: v6.6.1 
 jsonwebtoken: v8.5.1
-mysql2: v2.2.2
-sequelize: v6.3
+mysql2: v2.2.5
+sequelize: v6.3.5
 
 #Tablas creadas:
 

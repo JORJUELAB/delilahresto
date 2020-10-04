@@ -59,7 +59,30 @@ server.post("/productos", validateProduct, (req, res, next)=>{
             })
 })
 //Read
-
+//Traer todos los productos
+server.get('/productos', (req,res, next) => {
+    db.query('SELECT * FROM producto;', {type: Sequelize.QueryTypes.SELECT})
+    .then((data)=>{
+        res.json(data)
+    }).catch((error)=>{
+        res.status(500);
+        res.json(error);
+    })
+});
+ //Traer producto por id
+ server.get('/productos/:id', (req,res, next) => {
+    let id = req.params.id;
+    db.query('SELECT * FROM delilah_resto.producto WHERE (`producto_id` = :idp);', {type: Sequelize.QueryTypes.SELECT,
+        replacements: {
+            idp: id
+        }})
+    .then((data)=>{
+        res.json(data)
+    }).catch((error)=>{
+        res.status(500);
+        res.json(error);
+    })
+});
 //Update
 server.put("/productos/:id", validateProduct, (req, res, next)=>{
     let name =  req.body.producto_nombre;

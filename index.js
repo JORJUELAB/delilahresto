@@ -20,6 +20,7 @@ server.listen(5000, ()=>{
 });
 
 //CRUD PRODUCTO
+//Mddleware para validar que hayan datos en el producto
 function validateProduct(req,res,next){
     let name =  req.body.producto_nombre;
     let desc =  req.body.producto_descripcion;
@@ -86,5 +87,20 @@ server.put("/productos/:id", validateProduct, (req, res, next)=>{
                 res.json(error);
             })
 })
-
 //Delete
+server.delete("/productos/:id", (req, res, next)=>{
+    let ident = req.params.id;
+
+    db.query("DELETE FROM `delilah_resto`.`producto` WHERE (`producto_id` = :idp);", {
+                type: Sequelize.QueryTypes.DELETE,
+                replacements: {
+                    idp: ident
+                }
+            }).then((data)=>{
+                res.json({message: "Elemento con id = "+ ident + " fue eliminado con exito"});
+            }).catch((error)=>{
+                res.status(500) //500 internal server
+                console.log(error);
+                res.json(error);
+            })
+})

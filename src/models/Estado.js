@@ -20,7 +20,8 @@ const Estado = sequelize.define('estado', {
     unique: true,
   },
 }, {
-  timestamps: false
+  timestamps: false,
+  tableName: 'estado',
 });
 
 module.exports = Estado;

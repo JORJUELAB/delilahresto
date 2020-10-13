@@ -1,7 +1,9 @@
 let express = require ('express');
 let Sequelize = require ('sequelize');
-let jwt = require('jsonwebtoken');
 const producto = require('./src/routes/producto');
+const rol = require('./src/routes/rol');
+const estado = require('./src/routes/estado');
+const formaDePago = require('./src/routes/formaDePago');
 
 
 const server = express();
@@ -9,6 +11,9 @@ const server = express();
 //middleware importante 
 server.use(express.json());
 server.use('/producto', producto);
+server.use('/rol', rol);
+server.use('/estado', estado);
+server.use('/formadepago', formaDePago);
 
 const db = new Sequelize ("delilah_resto", "root", "1010216819Uc", { //database, usuario, password
     dialect: "mysql", 

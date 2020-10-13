@@ -19,7 +19,7 @@ router.get('/:id', async (req, res) => {
         res.json(producto);
     } else {
         res.status(404).json({
-            error: "Producto no encontrado.",
+            error: "Producto no encontrado, verifique el ID ingresado.",
         });
     }
 });
@@ -36,7 +36,7 @@ router.put("/:id",  async (req, res) => {
         const producto = await Producto.update(req.body, {
             where: { producto_id: req.params.id },
           });
-          res.json(producto);
+          res.json({ message: `Se ha modificado el producto con el ID:  ${req.params.id}` });
     }catch(error){
         res.status(500).json({ message: error })
     }
@@ -48,7 +48,7 @@ router.delete("/:id", async (req, res) => {
         await Producto.destroy({
             where: { producto_id: req.params.id },
         });
-        res.json({ message: `se ha eliminado el producto con el ID:  ${req.params.id}` });
+        res.json({ message: `Se ha eliminado el producto con el ID:  ${req.params.id}` });
     } catch (error) {
         res.status(500).json({ message: error })
     }

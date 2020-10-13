@@ -20,7 +20,8 @@ const Rol = sequelize.define('rol', {
     unique: true,
   },
 }, {
-  timestamps: false
+  timestamps: false,
+  tableName: 'rol',
 });
 
 module.exports = Rol;

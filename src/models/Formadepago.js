@@ -20,6 +20,7 @@ const FormaDePago = sequelize.define('formadepago', {
     unique: true,
   },
 }, {
-  timestamps: false
+  timestamps: false,
+  tableName: 'forma_de_pago',
 });
 module.exports =  FormaDePago;

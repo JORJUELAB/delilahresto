@@ -16,15 +16,19 @@ const DetallePedido = sequelize.define('detallepedido', {
   },
   detalle_pedido_pedido_id: {
     type: DataTypes.INTEGER,
+    allowNull: false,
   },
   detalle_pedido_producto: {
     type: DataTypes.INTEGER,
+    allowNull: false,
   },
   detalle_pedido_cantidad: {
     type: DataTypes.INTEGER,
+    allowNull: false,
   },
 }, {
-    timestamps: false
+    timestamps: false,
+    tableName: 'detalle_pedido',
 });
 
 module.exports =  DetallePedido;

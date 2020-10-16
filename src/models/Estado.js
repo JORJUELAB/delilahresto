@@ -16,8 +16,8 @@ const Estado = sequelize.define('estado', {
   },
   estado_nombre: {
     type: DataTypes.STRING(45),
-    allowNull: false,
     unique: true,
+    allowNull:false
   },
 }, {
   timestamps: false,

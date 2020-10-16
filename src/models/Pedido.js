@@ -28,7 +28,8 @@ const Pedido = sequelize.define('pedido', {
     defaultValue: Sequelize.NOW
   },
 }, {
-    timestamps: false
+    timestamps: false,
+    tableName: 'pedido',
 });
 
 module.exports =  Pedido;

@@ -11,7 +11,7 @@ const Rol = sequelize.define('rol', {
   // Model attributes are defined here
   rol_id: {
     type: DataTypes.INTEGER,
-    autoIncrement: true,
+    autoIncrement: false,
     primaryKey: true,
   },
   rol_name: {

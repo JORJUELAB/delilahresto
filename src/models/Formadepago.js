@@ -16,8 +16,8 @@ const FormaDePago = sequelize.define('formadepago', {
   },
   forma_de_pago_nombre: {
     type: DataTypes.STRING(100),
-    allowNull: false,
     unique: true,
+    allowNull: false,
   },
 }, {
   timestamps: false,

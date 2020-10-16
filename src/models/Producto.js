@@ -11,7 +11,6 @@ const Producto = sequelize.define('producto', {
   // Model attributes are defined here
   producto_id: {
     type: DataTypes.INTEGER,
-    //allowNull: false,
     autoIncrement: true,
     primaryKey: true
   },

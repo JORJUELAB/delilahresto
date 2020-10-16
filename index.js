@@ -4,6 +4,7 @@ const producto = require('./src/routes/producto');
 const rol = require('./src/routes/rol');
 const estado = require('./src/routes/estado');
 const formaDePago = require('./src/routes/formaDePago');
+const login = require('./src/routes/usuario');
 
 
 const server = express();
@@ -14,6 +15,8 @@ server.use('/producto', producto);
 server.use('/rol', rol);
 server.use('/estado', estado);
 server.use('/formadepago', formaDePago);
+server.use('/login', login);
+
 
 const db = new Sequelize ("delilah_resto", "root", "1010216819Uc", { //database, usuario, password
     dialect: "mysql", 
@@ -26,19 +29,3 @@ server.listen(3003, ()=>{
         console.log("Servidor conectado exitosamente");
     });
 });
-
-
-//Mddleware para validar que hayan datos en el producto
-/*function validateProduct(req,res,next){
-    let name =  req.body.producto_nombre;
-    let desc =  req.body.producto_descripcion;
-    let price =  req.body.producto_precio;
-    let url =  req.body.producto_imagen;
-
-    if(name && desc && price && url){
-        next();
-    }else{
-        res.status(400);
-        res.json({message: "envíe la información completa"});
-    }
-}*/

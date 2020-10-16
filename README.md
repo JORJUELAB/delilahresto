@@ -24,4 +24,8 @@ estado
 forma_de_pago
 producto
 
+Para inicializar los datos se debe correr:
 
+npx sequelize-cli init  //Creara las carpetas necesarias
+En la carpeta Seeders, agreagar: 
+npx sequelize-cli db:seed:all  //Inicializara los datos 

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const middleware = require("../middlewares/middleware");
 const Estado = require('../models/Estado');
 
 //CRUD Estado
@@ -23,7 +24,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create estado 
-router.post("/", async (req, res) => {
+router.post("/", middleware.verifyToken, middleware.verifyAdmin, async (req, res) => {
     try{
         let estado = await Estado.create(req.body);
         res.json(estado);
@@ -33,7 +34,7 @@ router.post("/", async (req, res) => {
 });
 
 // PUT Editar estado
-router.put("/:id",  async (req, res) => {
+router.put("/:id",  middleware.verifyToken, middleware.verifyAdmin, async (req, res) => {
     try{
         const estado = await Estado.update(req.body, {
             where: { estado_id: req.params.id },
@@ -45,7 +46,7 @@ router.put("/:id",  async (req, res) => {
   });
 
 // DELETE Eliminar estado
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", middleware.verifyToken, middleware.verifyAdmin, async (req, res) => {
     try {
         await Estado.destroy({
             where: { estado_id: req.params.id },

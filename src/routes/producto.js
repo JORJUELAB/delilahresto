@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const middleware = require("../middlewares/middleware");
 const Producto = require('../models/Producto');
 
 
@@ -25,13 +26,13 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create producto 
-router.post("/", async (req, res) => {
+router.post("/", middleware.verifyToken, middleware.verifyAdmin, async (req, res) => {
     let producto = await Producto.create(req.body);
     res.json(producto);
 });
 
 // PUT Editar producto
-router.put("/:id",  async (req, res) => {
+router.put("/:id",  middleware.verifyToken, middleware.verifyAdmin, async (req, res) => {
     try{
         const producto = await Producto.update(req.body, {
             where: { producto_id: req.params.id },
@@ -43,7 +44,7 @@ router.put("/:id",  async (req, res) => {
   });
 
 // DELETE Eliminar producto
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", middleware.verifyToken, middleware.verifyAdmin, async (req, res) => {
     try {
         await Producto.destroy({
             where: { producto_id: req.params.id },

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const middleware = require("../middlewares/middleware");
 const FormaDePago = require('../models/FormaDePago');
 
 //CRUD forma de pago
@@ -23,7 +24,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create formas de pago
-router.post("/", async (req, res) => {
+router.post("/", middleware.verifyToken, middleware.verifyAdmin, async (req, res) => {
     try{
         let formaDePago = await FormaDePago.create(req.body);
         res.json(formaDePago);
@@ -34,7 +35,7 @@ router.post("/", async (req, res) => {
 
 
 // PUT Editar formas de pago
-router.put("/:id",  async (req, res) => {
+router.put("/:id",  middleware.verifyToken, middleware.verifyAdmin, async (req, res) => {
     try{
         const formaDePago = await FormaDePago.update(req.body, {
             where: { forma_de_pago_id: req.params.id },
@@ -46,7 +47,7 @@ router.put("/:id",  async (req, res) => {
   });
 
 // DELETE Eliminar formas de pago
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", middleware.verifyToken, middleware.verifyAdmin, async (req, res) => {
     try {
         await FormaDePago.destroy({
             where: { forma_de_pago_id: req.params.id },

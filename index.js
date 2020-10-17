@@ -4,7 +4,8 @@ const producto = require('./src/routes/producto');
 const rol = require('./src/routes/rol');
 const estado = require('./src/routes/estado');
 const formaDePago = require('./src/routes/formaDePago');
-const login = require('./src/routes/usuario');
+const user = require('./src/routes/usuario');
+const cors = require("cors");
 
 
 const server = express();
@@ -15,7 +16,8 @@ server.use('/producto', producto);
 server.use('/rol', rol);
 server.use('/estado', estado);
 server.use('/formadepago', formaDePago);
-server.use('/login', login);
+server.use('/user', user);
+server.use(cors());
 
 
 const db = new Sequelize ("delilah_resto", "root", "1010216819Uc", { //database, usuario, password

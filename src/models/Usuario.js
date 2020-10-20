@@ -46,5 +46,9 @@ const Usuario = sequelize.define('usuario', {
   timestamps: false,
   tableName: 'usuario',
 });
-
+Usuario.prototype.toJSON = function () {
+  let values = Object.assign({}, this.get())
+  delete values.password
+  return values;
+}
 module.exports = Usuario;

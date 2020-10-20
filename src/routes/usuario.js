@@ -4,9 +4,6 @@ const middleware = require("../middlewares/middleware");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const Usuario = require('../models/Usuario');
-const { Op } = require("sequelize");
-const secretKey = "2ae89b5a-5f6d-456d-8762-7abc95f02abb";
-
 
 
 // Crear Usuario
@@ -30,80 +27,75 @@ router.post("/", async (req, res) => {
 
 //LOGIN
 router.post("/login", async (req, res) => {
-  //const { usuario, email, password } = req.body;
   const { usuario, password, email } = req.body;
-  const user = await Usuario.findOne({
-    where: {
-      [Op.or]: [
-        { usuario_nombre: usuario },
-        { email: email }
-      ]
-    }
-  });
+  const user = usuario
+    ? await Usuario.findOne({ where: { usuario_nombre: usuario } })
+    : await Usuario.findOne({ where: { email: email } });
 
   if (user) {
-    const validatePassword = bcrypt.compareSync(password, user.password);
-    if (validatePassword) {
-      let token = jwt.sign({
-        usuario: user,
-      }, secretKey, {
-        expiresIn: "1h"
-      })
-      return res.json({
-        usuarioId: user.usuario_id,
-        rol: user.usuario_rol_id,
-        message: 'Log in correct',
-        token,
-      })
+    if (bcrypt.compareSync(password, user.password)) {
+      return res.json({ user, token: Token(user), message: 'Login correcto' });
+    } else {
+      res.status(404).json({ error: "Error en usuario y/o contraseña" });
     }
-    return res.status(400).json({ message: 'El usuario y/o contraseña invalidos' });
+  } else {
+    res.status(404).json({ error: "Error en usuario y/o contraseña" });
   }
-  res.status(400).json({ message: 'El usuario y/o contraseña invalidos' });
+}
+)
+const Token = (usuario) => {
+  return jwt.sign(
+    {
+      usuarioId: usuario.usuario_id,
+      rol: usuario.usuario_rol_id,
+    }, process.env.SEED_AUTENTICACION, {
+    expiresIn: "2h"
+  })
+};
 
-});
 //Traer todos los usuarios solo para Admin
-router.get("/", middleware.verifyToken, middleware.verifyAdmin, async (req, res) => {
+router.get("/all", [middleware.verifyToken, middleware.verifyAdmin], async (req, res) => {
   const usuarios = await Usuario.findAll();
   res.json({ usuarios });
 }
 );
 
 
-//Traer usuario por ID solo para Admin
+// Traer usuario por ID, si es admin puede ver cualquier usuario, si es usuario sólo se puede ver la info propia
 router.get("/:id", middleware.verifyToken, async (req, res) => {
-  let usuario = {};
-  if (role == 1) {
-      usuario = await Usuario.findOne({
-      where: { id: req.params.id },
+
+  let payloadToken = req.usuario;
+  let usuario;
+  console.log('Payload Token: ', payloadToken);
+  if (payloadToken.rol == 1) {
+    usuario = await Usuario.findOne({
+      where: { usuario_id: req.params.id },
     });
-    return res.json({ usuario });
-  } else {
-    if (req.params.id == req.usuarioId) {
-      usuario = await Usuario.findOne({
-        where: { id: userid },
-      });
-      return res.json({ usuario });
-    } else {
-      return res
-        .status(401)
-        .json({ error: "No tiene permisos para realizar esta operación" });
-    }
+    return res.status(200).json({ usuario, message: "Información de usuario con ID:" + req.params.id });
   }
+  usuario = await Usuario.findOne({
+    where: { usuario_id: payloadToken.usuarioId },
+  });
+
+  return res.status(200).json({ usuario, message: "Información de usuario con ID:" + payloadToken.usuarioId });
 });
 
-//Editar usuario, si es usuario solo puede editar el propio, si es admin todos
-/*router.put("/:id", middleware.verificarToken, async (req, res) => {
-  if (req.rol == 1) {
-    const usuario = await Usuario.findOne({ where: { id: req.params.id } });
+// Editar usuario por ID, si es admin puede editar cualquier usuario, si es usuario sólo se puede editar la info propia
+
+router.put("/:id", middleware.verifyToken, async (req, res) => {
+  let payloadToken = req.usuario;
+  let usuario;
+  if (payloadToken.rol == 1) {
+    usuario = await Usuario.findOne({ where: { usuario_id: req.params.id } });
     if (usuario) {
       if (req.body.password) {
-        req.body.password = bcrypt.hashSync(req.body.password, 10); // Se cifra la contraseña 10 veces
+        req.body.password = bcrypt.hashSync(req.body.password, 10); // const hash = bcrypt.hashSync(Password, salt);
       }
       await Usuario.update(req.body, {
-        where: { id: req.params.id },
+        where: { usuario_id: req.params.id },
       })
         .then(() => {
-          res.json(`Se ha actualizado el usuario satisfactoriamente!`);
+          res.json("Usuario actualizado");
         })
         .catch((error) => {
           return res
@@ -116,15 +108,15 @@ router.get("/:id", middleware.verifyToken, async (req, res) => {
         .json({ error: `El usuario ${req.params.id} no existe` });
     }
   } else {
-    if (req.params.id == req.usuarioId) {
-      const usuario = await Usuario.findOne({ where: { id: req.params.id } });
+    if (req.params.id == req.usuarioId) { 
+      const usuario = await Usuario.findOne({ where: { usuario_id: req.params.id } });
       if (usuario) {
-        req.body.rol = usuario.rol;
+        req.body.rol = usuario_rol_id;
         if (req.body.password) {
-          req.body.password = bcrypt.hashSync(req.body.password, 10); // Se cifra la contraseña 10 veces
+          req.body.password = bcrypt.hashSync(req.body.password, 10); //const hash = bcrypt.hashSync(Password, salt);
         }
         await Usuario.update(req.body, {
-          where: { id: req.params.id },
+          where: { usuario_id: req.params.id },
         })
           .then(() => {
             return res.json(`Se ha actualizado el usuario satisfactoriamente!`);
@@ -145,25 +137,24 @@ router.get("/:id", middleware.verifyToken, async (req, res) => {
         .json({ error: "No tiene permisos para realizar esta operación" });
     }
   }
-});*/
+});
 
-/*
-// DELETE Eliminar un usuario, si es admin puede borrar cualquier usuario, si es cliente, sólo se puede borrar a sí mismo
-// DELETE FROM Usuarios WHERE id = id;
-router.delete("/:id", middleware.verificarToken, async (req, res) => {
-  if (req.rol == 1) {
+
+// Eliminar usuario por ID, si es admin puede eliminar cualquier usuario, si es usuario sólo se puede eliminar el propio
+router.delete("/:id", middleware.verifyToken, async (req, res) => {
+  if (req.usuario.rol == 1) {
     async (req, res) => {
       await Usuario.destroy({
-        where: { id: req.params.id },
+        where: { usuario_id: req.params.id },
       });
       return res.json({
         message: `se ha eliminado el usuario ${req.params.id}`,
       });
     };
   } else {
-    if (req.params.id == req.usuarioId) {
+    if (req.params.id == req.usuario.usuarioId) {
       await Usuario.destroy({
-        where: { id: req.params.id },
+        where: { usuario_id: req.params.id },
       });
       return res.json({
         message: `se ha eliminado el usuario ${req.params.id}`,
@@ -175,5 +166,6 @@ router.delete("/:id", middleware.verificarToken, async (req, res) => {
     }
   }
 });
-*/
+
+
 module.exports = router;

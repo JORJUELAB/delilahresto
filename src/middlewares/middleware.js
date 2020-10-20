@@ -1,45 +1,51 @@
 
 const Rol = require('../models/Rol');
-const secretKey = "2ae89b5a-5f6d-456d-8762-7abc95f02abb";
 const jwt = require('jsonwebtoken');
+require('../config_env/config')
+const secretKey = "9729b35c-ac91-4833-a328-3a1b732f25f4"
 
 function verifyToken(req, res, next) {
-  try {
-    const token = req.headers["authorization"].split(" ")[1];
-    if (token) {
-      jwt.verify(token, secretKey, (err, decoded) => {
-        if (err) {
-          return res.json({ mensaje: 'Token inválida' });
-        } else {
-          req.decoded = decoded;
-          next();
-        }
-      });
-    } else {
-      res.send({
-        mensaje: 'Token no proveída.'
-      });
+  const token = req.get('token');
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if(err) {
+      return res.status(err).json({
+        message: 'Token no valido'
+      })
     }
-  }
-  catch (error) {
-    res.status(401)
-    res.json({ message: "no  bmfgohs" })
-  }
+    req.usuario = decoded
+    console.log('Usuario middleware: ', decoded);
+    next();
+  })
 }
 
 const verifyAdmin = async (req, res, next) => {
-  const role = await Rol.findByPk(req.decoded.usuario.usuario_rol_id);
-  console.log(role.rol_name)
+  
+  const role = await Rol.findByPk(req.usuario.usuarioId);
+  console.log('Role Usuario: ', role.rol_name);
   if (role.rol_name == "Administrador") {
-    next();
-  } else {
-    return res.status(401).json({
-      error: "Usuario no Autorizado!",
-    });
-  }
+    req.usuario.rol_name = role.rol_name;
+    return next();
+  } 
+  return res.status(401).json({
+    error: "Usuario no Autorizado!",
+  });
+  
 };
 
+const verifyUser = async (req, res, next) => {
+  
+  const role = await Rol.findByPk(req.usuario.usuarioId);
+  console.log('Role Usuario: ', role.rol_name);
+  if (role.rol_name == "Usuario") {
+    return next();
+  } 
+  return res.status(401).json({
+    error: "Usuario no Autorizado!",
+  });
+  
+};
 module.exports = {
   verifyAdmin,
   verifyToken,
+  verifyUser
 };

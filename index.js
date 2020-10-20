@@ -6,6 +6,7 @@ const estado = require('./src/routes/estado');
 const formaDePago = require('./src/routes/formaDePago');
 const user = require('./src/routes/usuario');
 const cors = require("cors");
+require('./src/config_env/config')
 
 
 const server = express();

@@ -27,7 +27,7 @@ router.get('/:id', async (req, res) => {
 router.post("/", middleware.verifyToken, middleware.verifyAdmin, async (req, res) => {
     try{
         let estado = await Estado.create(req.body);
-        res.json(estado);
+        res.json(estado).json({message: "Estado creado con exito"});
     }catch(error){
         res.status(500).json({ message: error })   
     }

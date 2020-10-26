@@ -87,17 +87,13 @@ Depending on your profile (administrator / user), you can access different endpo
 Este es un ejemplo para la creación de pedidos
 
 POST/pedido Request application/json
-   {
-      "usuario": 3,
-      "formaPago": 1,
-      "productos":
-        [{
-          "id":10,
-          "cantidad":1
-        },
-        {
-          "id":11,
-          "cantidad":2
-        }
-      ]
-    }
+{
+    "pedido_forma_de_pago_id": 2,
+    "productos": [{
+        "id": 1,
+        "cantidad": 3
+    },{
+        "id": 2,
+        "cantidad": 1
+    }]
+}

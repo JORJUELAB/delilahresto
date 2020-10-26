@@ -119,7 +119,7 @@ router.put("/:id", middleware.verifyToken, async (req, res) => {
           where: { usuario_id: req.params.id },
         })
           .then(() => {
-            return res.json(`Se ha actualizado el usuario satisfactoriamente!`);
+            return res.json("Se ha actualizado el usuario");
           })
           .catch((error) => {
             return res
@@ -129,12 +129,12 @@ router.put("/:id", middleware.verifyToken, async (req, res) => {
       } else {
         return res
           .status(404)
-          .json({ error: `El usuario ${req.params.id} no existe` });
+          .json({ error: `No se ha encontrado usuario con ID:  ${req.params.id}` });
       }
     } else {
       return res
         .status(401)
-        .json({ error: "No tiene permisos para realizar esta operación" });
+        .json({ error: "No tiene permisos para realizar esta acción" });
     }
   }
 });
@@ -148,7 +148,7 @@ router.delete("/:id", middleware.verifyToken, async (req, res) => {
         where: { usuario_id: req.params.id },
       });
       return res.json({
-        message: `se ha eliminado el usuario ${req.params.id}`,
+        message: `El usuario con ID: ${req.params.id} ha sido eliminado`,
       });
     };
   } else {
@@ -157,12 +157,12 @@ router.delete("/:id", middleware.verifyToken, async (req, res) => {
         where: { usuario_id: req.params.id },
       });
       return res.json({
-        message: `se ha eliminado el usuario ${req.params.id}`,
+        message: `El usuario con ID: ${req.params.id} ha sido eliminado`,
       });
     } else {
       return res
         .status(401)
-        .json({ error: "No tiene permisos para realizar esta operación" });
+        .json({ error: "No tiene permisos para realizar esta acción" });
     }
   }
 });

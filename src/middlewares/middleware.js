@@ -19,9 +19,9 @@ function verifyToken(req, res, next) {
 }
 
 const verifyAdmin = async (req, res, next) => {
-  
-  const role = await Rol.findByPk(req.usuario.usuarioId);
-  console.log('Role Usuario: ', role.rol_name);
+  console.log(req.usuario.usuarioId)
+  const role = await Rol.findByPk(req.usuario.rol);
+  console.log(role)
   if (role.rol_name == "Administrador") {
     req.usuario.rol_name = role.rol_name;
     return next();
@@ -32,20 +32,7 @@ const verifyAdmin = async (req, res, next) => {
   
 };
 
-const verifyUser = async (req, res, next) => {
-  
-  const role = await Rol.findByPk(req.usuario.usuarioId);
-  console.log('Role Usuario: ', role.rol_name);
-  if (role.rol_name == "Usuario") {
-    return next();
-  } 
-  return res.status(401).json({
-    error: "Usuario no Autorizado!",
-  });
-  
-};
 module.exports = {
   verifyAdmin,
   verifyToken,
-  verifyUser
 };

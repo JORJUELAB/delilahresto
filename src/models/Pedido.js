@@ -12,19 +12,25 @@ const Pedido = sequelize.define('pedido', {
   pedido_id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
-    primaryKey: true
+    primaryKey: true,
   },
   pedido_usuario_id: {
     type: DataTypes.INTEGER,
+    allowNull: false,
   },
   pedido_estado_id: {
     type: DataTypes.INTEGER,
+    defaultValue: 1,
   },
   pedido_forma_de_pago_id: {
     type: DataTypes.INTEGER,
+    defaultValue: 1,
   },
-  date: {
-    type: DataTypes.DATETIME,
+  pedido_total: {
+    type: DataTypes.INTEGER,
+  },
+  date:{
+    type: DATE,
     defaultValue: Sequelize.NOW
   },
 }, {
